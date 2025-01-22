@@ -27,8 +27,7 @@ public class TodoCustomRepositoryImpl implements TodoCustomRepository{
         QUser quser = QUser.user;
 
         Todo todo = jpaQueryFactory
-            .select(qtodo)
-            .from(qtodo)
+            .selectFrom(qtodo)
             .leftJoin(qtodo.user, quser).fetchJoin()
             .where(qtodo.id.eq(todoId))
             .fetchOne(); // 단일 결과 조회 (결과가 없으면 Null 반환)
