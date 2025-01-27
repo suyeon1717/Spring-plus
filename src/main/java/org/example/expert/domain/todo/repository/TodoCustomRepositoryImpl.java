@@ -84,7 +84,7 @@ public class TodoCustomRepositoryImpl implements TodoCustomRepository{
                         select(Wildcard.count).from(comment).where(todo.id.eq(comment.todo.id))
                     )
                 )
-                .distinct()
+//                .distinct() // 일정 중복 제거 (ex.담당자가 여러 명일 경우) 단, 성능이 떨어질 수 있다.
                 .from(todo)
                 // 닉네임 검색 외에는 담당자가 없는 일정도 결과에 나와야함. -> leftJoin
                 .leftJoin(todo.managers, manager)
@@ -95,6 +95,7 @@ public class TodoCustomRepositoryImpl implements TodoCustomRepository{
                     createdDateBetween(requestDto.startDate(), requestDto.endDate()),
                     nicknameContains(requestDto.nickname())
                 )
+                .groupBy(todo.id) // 일정 중복 제거 (ex.담당자가 여러 명일 경우)
                 .orderBy(todo.createdAt.desc()) // 생성일 최신순으로 정렬
                 .limit(pageable.getPageSize()) // 1페이지당 몇 개까지 받아올건지
                 .offset(pageable.getOffset()) // 몇 번째 페이지에서부터 갖고올건지
